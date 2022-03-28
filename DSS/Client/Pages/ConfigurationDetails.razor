@@ -1,0 +1,28 @@
+﻿@page "/configurations/details/{id:int}"
+
+@using DSS.Shared
+@using System.Text.Json
+@inject IConfigurationService ConfigurationService
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<h3>@Configuration.Name</h3>
+<hr class="solid">
+
+    <textarea disabled style="height:50rem;width:100%;background-color:gainsboro;font-weight: bold;font-size: 20px;">@JsonData</textarea>
+
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private string JsonData = string.Empty;
+    public Configuration Configuration = new Configuration();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ConfigurationService.GetConfigurationById(Id);
+        Configuration = ConfigurationService.Configuration;
+        JsonData = JsonSerializer.Serialize(ConfigurationService.Configuration, new JsonSerializerOptions(){WriteIndented = true});
+    }
+}

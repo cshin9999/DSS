@@ -1,0 +1,88 @@
+﻿@page "/configurations/edit/{id:int}"
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+
+<h3>Edit Configuration</h3>
+<MudPaper Class="pa-4" Outlined="true">
+    <h5>Accumulator types. Select all that apply</h5>
+    <MudItem xs="12" md="2">
+        <MudCheckBox @bind-Checked="@Label_CheckBox2" Label="Import" Color="Color.Dark"></MudCheckBox>
+        <br/>
+        <MudCheckBox @bind-Checked="@Label_CheckBox3" Label="Export" Color="Color.Dark"></MudCheckBox>
+    </MudItem>
+    <hr class="solid">
+
+    <MudTextField @bind-Value="@_thing" Label="Name"/>
+    <MudSelect T="string" Label="Carriers" MultiSelection="true" @bind-SelectedValues="SelectedCarriers">
+    @foreach (var carrier in selectableCarriers)
+    {
+        <MudSelectItem T="string" Value="@carrier">@carrier</MudSelectItem>
+    }
+    </MudSelect>
+    <MudSelect T="string" Label="Export Carriers" MultiSelection="true" @bind-SelectedValues="SelectedExportCarriers">
+    @foreach (var exportCarrier in selectableExportCarriers)
+    {
+        <MudSelectItem T="string" Value="@exportCarrier">@exportCarrier</MudSelectItem>
+    }
+    </MudSelect>
+    <MudSelect T="string" Label="Groups" MultiSelection="true" @bind-SelectedValues="SelectedGroups">
+    @foreach (var group in selectableGroups)
+    {
+        <MudSelectItem T="string" Value="@group">@group</MudSelectItem>
+    }
+    </MudSelect>
+    <MudSelect T="string" Label="Client" @bind-SelectedValues="SelectedGroups">
+    @foreach (var group in selectableGroups)
+    {
+        <MudSelectItem T="string" Value="@group">@group</MudSelectItem>
+    }
+    </MudSelect>
+    <MudSelect T="string" Label="Control File" @bind-SelectedValues="SelectedGroups">
+    @foreach (var group in selectableGroups)
+    {
+        <MudSelectItem T="string" Value="@group">@group</MudSelectItem>
+    }
+    </MudSelect>
+    <div style="display:flex; justify-content: space-between;justify-content: flex-end;" class="pt-5">
+        <MudButton Variant="Variant.Text">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary">Submit Changes</MudButton>
+    </div>
+</MudPaper>
+
+
+
+@code {
+    string _thing;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    bool success;
+    public bool Label_CheckBox2 { get; set; } = false;
+    public bool Label_CheckBox3 { get; set; } = false;
+
+    private IEnumerable<string> SelectedCarriers { get; set; } = new HashSet<string>() { "Alaska" };
+    private IEnumerable<string> SelectedExportCarriers { get; set; } = new HashSet<string>() { "Colorado" };
+    private IEnumerable<string> SelectedGroups { get; set; } = new HashSet<string>() { "Indiana" };
+
+    private string[] selectableCarriers =
+    {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas"
+    };
+    private string[] selectableExportCarriers =
+    {
+        "California", "Colorado", "Connecticut"
+    };
+    private string[] selectableGroups =
+    {
+        "Idaho","Illinois", "Indiana", "Iowa"
+    };
+
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+    }
+
+}

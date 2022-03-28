@@ -1,0 +1,72 @@
+﻿@page "/configurations"
+
+@using DSS.Shared
+@inject IConfigurationService ConfigurationService
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<h3>Configurations</h3>
+<div>
+        <span style="font-size:14pt;font-weight:bold;" class="d-inline">Select Client:&nbsp;&nbsp;</span>
+        <div style="width: 17rem;display: inline-block;">
+            <MudSelect  T="string" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" >
+                <MudSelectItem Value="@("ROI")" />
+                <MudSelectItem Value="@("MXR")" />
+                <MudSelectItem Value="@("EPH")" />
+            </MudSelect>
+        </div>
+        <MudButton style="float:right;" HtmlTag="label"
+               Variant="Variant.Filled"
+               Color="Color.Primary"
+               StartIcon="@Icons.Filled.CloudUpload"
+               for="fileInput">
+                Upload Files
+        </MudButton>
+</div>
+
+
+<MudTable Items="@Elements" Hover="true" SortLabel="Sort By">
+    <HeaderContent>
+        <MudTh Style="@($"background:{Colors.Blue.Lighten5};")"><MudTableSortLabel SortBy="new Func<Configuration, object>(x=>x.Name)">Accumulator Name</MudTableSortLabel></MudTh>
+        <MudTh Style="@($"background:{Colors.Blue.Lighten5};")"><MudTableSortLabel Enabled="@enabled" SortBy="new Func<Configuration, object>(x=>x.LastModifiedDate)">Last modified date</MudTableSortLabel></MudTh>
+        <MudTh Style="@($"background:{Colors.Blue.Lighten5};")"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Configuration, object>(x=>x.Status)">Status</MudTableSortLabel></MudTh>
+        <MudTh Style="@($"background:{Colors.Blue.Lighten5};")">Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">
+            <MudLink Href="@($"configurations/details/{@context.Id}")">@context.Name</MudLink>
+        </MudTd>
+        <MudTd DataLabel="Sign">@context.LastModifiedDate</MudTd>
+        <MudTd DataLabel="Name">@context.Status</MudTd>
+        <MudTd DataLabel="">
+            <MudLink Href="@($"configurations/edit/{@context.Id}")">Edit</MudLink> | 
+            <MudLink Href="@($"configurations/delete/{@context.Id}")">Delete</MudLink>
+            @if (false)
+            {   <span>| </span> 
+                <MudLink Href="">Publish</MudLink>
+            }
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+</MudTable>
+<div style="float:right;" class="pt-5">
+    <MudButton Href="@($"configurations/create")" Class="align-end" Variant="Variant.Filled" Color="Color.Primary">Create Configuration</MudButton>
+</div>
+
+@code {
+    private bool enabled = true;
+    private IEnumerable<Configuration> Elements = new List<Configuration>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ConfigurationService.GetConfigurations();
+        Elements = ConfigurationService.Configurations;
+    }
+
+    private void NaviageToCreate()
+    {
+        NavigationManager.NavigateTo("/configurations/create");
+    }
+}
